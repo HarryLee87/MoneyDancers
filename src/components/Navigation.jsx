@@ -37,6 +37,8 @@ const Navigation = () => {
         },
         tabBarStyle: {
           backgroundColor: '#F3B391',
+          paddingTop: 5,
+          height: '6.5%',
           
         },
         
@@ -45,7 +47,7 @@ const Navigation = () => {
       <Tab.Screen name="Account" component={AccountScreen} />
       <Tab.Screen name="Transaction" component={TransactionScreen} />
       {/* <Tab.Screen name="Create" component={HomeScreen} options={{ tabBarLabel: '' }} /> */}
-      <Tab.Screen name="Chart" component={ChartScreen} />
+      <Tab.Screen name="Chart" component={ChartScreen} options={{headerShown: false}} />
       <Tab.Screen name="Setting" component={SettingScreen} />
     </Tab.Navigator>
   );

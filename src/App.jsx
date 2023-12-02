@@ -12,7 +12,7 @@ function App() {
   return (
       <SafeAreaView style={{ flex: 1 }}>
         <NavigationContainer>
-          <Navigation />
+          <Navigation />          
         </NavigationContainer>
       </SafeAreaView>
   );
