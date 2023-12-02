@@ -10,13 +10,11 @@ function App() {
   const Stack = createNativeStackNavigator();
 
   return (
-    <MainLayout>
       <SafeAreaView style={{ flex: 1 }}>
         <NavigationContainer>
           <Navigation />
         </NavigationContainer>
       </SafeAreaView>
-    </MainLayout>
   );
 }
 

@@ -12,6 +12,7 @@ const MainLayout = ({ children }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#FFF9DB',
         padding: 20,
     }
 });
