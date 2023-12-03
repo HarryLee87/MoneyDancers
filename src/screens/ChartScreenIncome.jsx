@@ -7,10 +7,10 @@ import * as Progress from 'react-native-progress';
 const ChartScreenIncome = ({navigation}) => {
   const widthAndHeight = 250
     const data = [
-        { name: 'Salary', value: 85, color: '#B68CB8' },
-        { name: 'Investing', value: 10, color: '#C1F7DC' },
-        { name: 'Refund', value: 2, color: '#0BC9CD' },
-        { name: 'Others', value: 3, color: '#97EAD2' },
+        { name: 'Salary', value: 85, color: '#6A7FDB', amount: '$2200' },
+        { name: 'Investing', value: 10, color: '#60AFFF', amount: '$500' },
+        { name: 'Refund', value: 2, color: '#55D6BE', amount: '$250' },
+        { name: 'Others', value: 3, color: '#97EAD2', amount: '$90' },
         
     ];
     
@@ -82,10 +82,13 @@ const ChartScreenIncome = ({navigation}) => {
       <ScrollView style={styles.scrollContainer}>
         <View style={{ flexDirection: 'column', marginTop: 30, marginBottom:20, marginLeft: 50, flexWrap: 'wrap', alignSelf: 'flex-start' }}>
             {data.map((item, index) => (
-                <View key={index} style={{ backgroundColor: item.color, padding: 10, marginBottom: 2, borderRadius: 15 }}>
-                <Text style={{ color: '#000', fontSize: 16 }}>
-                    {`${item.value}% ${item.name}`}
-                </Text>
+                <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: item.color, padding: 10, marginBottom: 2, borderRadius: 15 }}>
+                  <View style={{ width: 250, justifyContent: 'center' }}>
+                    <Text style={{ color: '#000', fontSize: 16 }}>
+                        {`${item.value}% ${item.name}`}
+                    </Text>
+                  </View>
+                  <Text style={{ color: '#000', fontSize: 16 }}>{item.amount}</Text> 
                 </View>
                 ))}
         </View>
