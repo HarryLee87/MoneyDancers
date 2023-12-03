@@ -1,10 +1,10 @@
 
-import React,{useState} from "react";
+import React,{useState, useEffect} from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from "react-native";
 import PieChart from 'react-native-pie-chart';
 import * as Progress from 'react-native-progress';
 
-const ChartScreenIncome = () => {
+const ChartScreenIncome = ({navigation}) => {
   const widthAndHeight = 250
     const data = [
         { name: 'Salary', value: 85, color: '#B68CB8' },
@@ -21,7 +21,17 @@ const ChartScreenIncome = () => {
 
     const handleButtonClick = (button) => {
         setActiveButton(button);
+        if (button === "Expense") {
+            navigation.navigate("ChartScreen");
+        }
     };
+    // useEffect(() => {
+    //   // This effect will be triggered after the component has re-rendered
+    //   if (activeButton === "Expense") {
+    //     // Change the color after navigating to ChartScreen
+    //     setActiveButton("Expense"); // Update the state to trigger a re-render
+    //   }
+    // }, [navigation]); // Trigger the effect when the navigation prop changes
     
 
   return (
@@ -180,3 +190,5 @@ const styles = StyleSheet.create({
 });
 
 export default ChartScreenIncome;
+
+
