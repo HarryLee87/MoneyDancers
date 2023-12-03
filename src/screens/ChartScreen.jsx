@@ -28,7 +28,7 @@ const ChartScreen = ({navigation}) => {
 
     const [activeButton, setActiveButton] = useState("Expense");
 
-    const navigation = useNavigation();
+    //const navigation = useNavigation();
 
     const handleButtonClick = (button) => {
         setActiveButton(button);
@@ -39,7 +39,7 @@ const ChartScreen = ({navigation}) => {
     
 
   return (    
-    <Stack.Navigator>
+    // <Stack.Navigator>
         <View style={styles.container}>
             {/* <NavigationContainer>
                 <Stack.Navigator>
@@ -108,7 +108,7 @@ const ChartScreen = ({navigation}) => {
             </View>
         </ScrollView>
         </View>
-    </Stack.Navigator>
+    
   );
 };
 
