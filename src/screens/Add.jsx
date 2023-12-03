@@ -1,5 +1,4 @@
-import {isExists, set} from 'date-fns';
-import React, {useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -12,8 +11,32 @@ import {
   TouchableOpacity,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
-// import {Picker} from '@react-native-picker/picker';
-// import RNPickerSelect from 'react-native-picker-select';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {Dropdown} from 'react-native-element-dropdown';
+
+// for dropdown list data
+const AccountData = [
+  {label: 'Cash', value: 'Cash'},
+  {label: 'Debit', value: 'Debit'},
+  {label: 'Saving', value: 'Saving'},
+  {label: 'Credit Card', value: 'Credit Card'},
+  {label: 'Others', value: 'Others'},
+];
+const ExpenseCatoData = [
+  {label: 'Drinks', value: 'Drinks'},
+  {label: 'Food', value: 'Food'},
+  {label: 'Groceries', value: 'Groceries'},
+  {label: 'Housing', value: 'Housing'},
+  {label: 'Insurance', value: 'Insurance'},
+  {label: 'Utilities', value: 'Utilities'},
+  {label: 'Others', value: 'Others'},
+];
+
+const IncomeCatoData = [
+  {label: 'Salary', value: 'Salary'},
+  {label: 'Investing', value: 'Investing'},
+  {label: 'Others', value: 'Others'},
+];
 
 export default function AddScreen() {
   //default value
@@ -22,40 +45,37 @@ export default function AddScreen() {
     (new Date().getMonth() + 1).toString(),
   );
   const [day, setDay] = React.useState(new Date().getDate().toString());
-  const [account, setAccount] = React.useState('');
+  const [dateShow, setDateShow] = React.useState(false);
+  const [account, setAccount] = React.useState(null);
   const [typeBtnSelected, setTypeBtnSelected] = React.useState('Expense');
-  const [category, setCategory] = React.useState('');
+  const [category, setCategory] = React.useState(null);
   const [amount, setAmount] = React.useState(0);
-  const [note, setNote] = React.useState('');
+  const [note, setNote] = React.useState(null);
   // for testing display result
   const [displayCondition, setDisplayCondition] = React.useState(false);
   const [transaction, setTransaction] = React.useState(null);
+  //----
+  const [isFocus, setIsFocus] = useState(false);
 
   // handle change
-  const handleYearChange = e => {
-    setYear(parseInt(e));
+  const handleDateChange = (e, selectedDate) => {
+    setDateShow(false);
+    setYear(selectedDate.getFullYear().toString());
+    setMonth((selectedDate.getMonth() + 1).toString());
+    setDay(selectedDate.getDate().toString());
   };
 
-  const handleMonthChange = e => {
-    setMonth(e.target.value);
-  };
-
-  const handleDayChange = e => {
-    setDay(e.target.value);
-  };
-
-  const handleAccountChange = text => {
-    setAccount(text);
+  const handleAccountChange = e => {
+    setAccount(e);
   };
 
   const handleTypeChange = text => {
     setTypeBtnSelected(text);
   };
 
-  const handleCategoryChange = text => {
-    setCategory(text);
+  const handleCategoryChange = e => {
+    setCategory(e);
   };
-
   const handleAmountChange = e => {
     setAmount(parseInt(e) || 0);
     // setAmount(e.target.value);
@@ -65,27 +85,23 @@ export default function AddScreen() {
     setNote(text);
   };
 
-  // console.log(year, month, day);
-
   const handleSubmitted = () => {
     if (account === '' || category === '' || amount === 0) {
       alert('Please fill in all required fields');
       return;
     }
+
+    //for testing display result
     setDisplayCondition(true);
+    //----
 
     const transaction = {
-      // date: set(new Date(), {
-      //   year: year,
-      //   month: month,
-      //   day: day,
-      // }),
       year: year,
       month: month,
       day: day,
-      account: account,
+      account: account.value,
       type: typeBtnSelected,
-      category: category,
+      category: category.value,
       amount: amount,
       note: note,
     };
@@ -95,11 +111,11 @@ export default function AddScreen() {
     setYear(new Date().getFullYear().toString());
     setMonth((new Date().getMonth() + 1).toString());
     setDay(new Date().getDate().toString());
-    setAccount('');
+    setAccount(null);
     setTypeBtnSelected('Expense');
-    setCategory('');
+    setCategory(null);
     setAmount(0);
-    setNote('');
+    setNote(null);
 
     return transaction;
   };
@@ -109,55 +125,64 @@ export default function AddScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.view}>
           <Text style={styles.text}>Date: </Text>
-          {/* will change to date picker */}
           <View style={styles.dateView}>
-            <TextInput
-              style={styles.dateInput}
-              placeholder="Year"
-              value={year}
-              onChangeText={handleYearChange}
-              keyboardType="numeric"
-            />
-            <TextInput
-              style={styles.dateInput}
-              placeholder="Month"
-              value={month}
-              onChangeText={handleMonthChange}
-              keyboardType="numeric"
-            />
-            <TextInput
-              style={styles.dateInput}
-              placeholder="Day"
-              value={day}
-              onChangeText={handleDayChange}
-              keyboardType="numeric"
-            />
+            <Text style={styles.dateText}>
+              {year}-{month}-{day}
+            </Text>
+            <TouchableOpacity>
+              <Text
+                style={styles.datePickerBtn}
+                onPress={() => {
+                  setDateShow(true);
+                }}>
+                Change
+              </Text>
+            </TouchableOpacity>
+            {dateShow && (
+              <DateTimePicker
+                value={new Date(year, month - 1, day)}
+                mode="date"
+                display="calendar"
+                onChange={handleDateChange}
+              />
+            )}
           </View>
         </View>
         <View style={styles.view}>
           <Text style={styles.text}>Account: </Text>
-          {/* will change to drop down list to choose account */}
-          <TextInput
-            style={styles.input}
-            placeholder="Select an account"
+          <Dropdown
+            style={styles.dropdownList}
+            labelField="label"
+            valueField="value"
+            placeholder="Select item"
+            data={AccountData}
             value={account}
-            onChangeText={handleAccountChange}
+            onChange={handleAccountChange}
           />
         </View>
         <View style={styles.view}>
-          {/* For choosing income or expense */}
           <Text style={styles.text}>Type: </Text>
           <View style={styles.typeBtnView}>
             <TouchableOpacity>
               <Text
-                style={styles.typeBtn}
+                style={[
+                  styles.typeBtn,
+                  typeBtnSelected === 'Expense'
+                    ? {backgroundColor: '#363635', color: 'white'}
+                    : {backgroundColor: 'lightgray', color: 'black'},
+                ]}
                 onPress={() => handleTypeChange('Expense')}>
                 Expense
               </Text>
             </TouchableOpacity>
             <TouchableOpacity>
               <Text
-                style={styles.typeBtn}
+                style={[
+                  styles.typeBtn,
+                  typeBtnSelected === 'Income'
+                    ? {backgroundColor: '#363635', color: 'white'}
+                    : {backgroundColor: 'lightgray', color: 'black'},
+                ]}
                 onPress={() => handleTypeChange('Income')}>
                 Income
               </Text>
@@ -165,14 +190,28 @@ export default function AddScreen() {
           </View>
         </View>
         <View style={styles.view}>
-          {/* will change to drop down list to choose account */}
           <Text style={styles.text}>Category: </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Select a category"
-            value={category}
-            onChangeText={handleCategoryChange}
-          />
+          <View style={{width: 200}}>
+            {typeBtnSelected === 'Expense' ? (
+              <Dropdown
+                style={styles.dropdownList}
+                labelField="label"
+                valueField="value"
+                data={ExpenseCatoData}
+                value={category}
+                onChange={handleCategoryChange}
+              />
+            ) : (
+              <Dropdown
+                style={styles.dropdownList}
+                labelField="label"
+                valueField="value"
+                data={IncomeCatoData}
+                value={category}
+                onChange={handleCategoryChange}
+              />
+            )}
+          </View>
         </View>
         <View style={styles.view}>
           <Text style={styles.text}>Amount: </Text>
@@ -187,9 +226,10 @@ export default function AddScreen() {
         <View style={styles.view}>
           <Text style={styles.text}>Note: </Text>
           <TextInput
-            style={styles.input}
+            style={styles.noteInput}
             placeholder="Note"
             value={note}
+            multiline={true}
             onChangeText={handleNoteChange}
           />
         </View>
@@ -197,8 +237,6 @@ export default function AddScreen() {
           <Button
             title="Add"
             onPress={() => {
-              // setAmount(0);
-              // setDay(day);
               handleSubmitted();
             }}
           />
@@ -270,6 +308,28 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
+  dateText: {
+    height: 30,
+    width: 140,
+    margin: 5,
+    padding: 5,
+    borderWidth: 1,
+    borderRadius: 5,
+    fontSize: 16,
+    backgroundColor: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
+  datePickerBtn: {
+    backgroundColor: '#f2f1a5',
+    color: 'black',
+    padding: 4,
+    paddingHorizontal: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+  },
+
   dateInput: {
     height: 30,
     width: 60,
@@ -287,11 +347,29 @@ const styles = StyleSheet.create({
   },
 
   typeBtn: {
-    backgroundColor: 'gray',
-    color: 'white',
+    color: 'black',
     padding: 4,
     paddingHorizontal: 15,
     borderRadius: 5,
     borderWidth: 1,
+  },
+
+  dropdownList: {
+    height: 30,
+    width: 200,
+    marginVertical: 6,
+    padding: 3,
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+
+  noteInput: {
+    height: 60,
+    width: 200,
+    margin: 5,
+    padding: 3,
+    borderWidth: 1,
+    borderRadius: 5,
+    textAlignVertical: 'top',
   },
 });
