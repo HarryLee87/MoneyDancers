@@ -3,82 +3,122 @@ import {
   StyleSheet,
   Text,
   View,
-  SectionList,
+  ScrollView,
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import SQLite from 'react-native-sqlite-storage';
-
-const db = SQLite.openDatabase(
-  {name: 'moneydancer.db', location: 'default'},
-  () => {
-    console.log('db opened');
-  },
-  error => console.log(error),
-);
+import {
+  getExpenses,
+  getExpenseCategory,
+} from '../services/GetAccountDataQueries';
 
 export default function TransactionExpense() {
   const [expenses, setExpenses] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [expenseCategory, setExpenseCategory] = useState([]);
 
   useEffect(() => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM expenses',
-        [],
-        (_, {rows}) => {
-          console.log('from transactionexpense compo:', rows); // 확인용 로그
-
-          let newExpenses = [];
-
-          for (let i = 0; i < rows.length; i++) {
-            let id = rows.item(i).id;
-            let date = rows.item(i).date;
-            let amount = rows.item(i).amount;
-            let description = rows.item(i).description;
-            let account_categories_id = rows.item(i).account_categories_id;
-            let expense_categories_id = rows.item(i).expense_categories_id;
-
-            newExpenses.push({
-              id,
-              date,
-              amount,
-              description,
-              account_categories_id,
-              expense_categories_id,
-            });
-          }
-          setExpenses(newExpenses);
-        },
-        (_, error) => console.log(error),
-      );
-    });
+    const categoryFetchData = async () => {
+      try {
+        const expenseCategoryResult = await getExpenseCategory();
+        const categories = await Promise.all(
+          expenseCategoryResult.map(async category => {
+            return {...category};
+          }),
+        );
+        setExpenseCategory(categories);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    categoryFetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const expenseResult = await getExpenses();
+        console.log(expenseResult);
+        let newExpenses = [];
+
+        newExpenses = Array.from(expenseResult).map(row => ({
+          id: row.id,
+          date: row.date,
+          amount: row.amount,
+          description: row.description,
+          account_categories_id: row.account_categories_id,
+          expense_categories_id: row.expense_categories_id,
+          // expense_category_name: expenseCategory.find(
+          //   category => category.id === row.expense_categories_id,
+          // )?.name,
+        }));
+
+        setExpenses(newExpenses);
+        // setExpenseCategory(expenseCategoryResult);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  const uniqueDates = [...new Set(expenses.map(item => item.date))];
+
   return (
-    <View>
-      {expenses.length === 0 ? (
-        <Text>No expenses</Text>
-      ) : (
-        <FlatList
-          data={expenses}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => (
-            <View>
-              <Text>{`Amount: ${item.amount}`}</Text>
-              <Text>{`Desc: ${item.description}`}</Text>
+    <ScrollView style={styles.container}>
+      <View>
+        {expenses.length === 0 ? (
+          <Text>No expenses</Text>
+        ) : (
+          uniqueDates.map(date => (
+            <View key={date}>
+              <Text style={styles.dateValue}>{`Date: ${date}`}</Text>
+              {expenses
+                .filter(item => item.date === date)
+                .map(item => (
+                  <View key={item.id} style={styles.expenseItem}>
+                    {/* <Text>{`${item.category_name}`}</Text> */}
+                    <Text>{`${item.expense_categories_id}`}</Text>
+                    <Text>{`${item.description}`}</Text>
+                    <Text>{`${item.amount}`}</Text>
+                  </View>
+                ))}
             </View>
-          )}
-        />
-      )}
-    </View>
+          ))
+        )}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFF9DB',
+    width: '100%',
+  },
+  dateValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 10,
+  },
   expenseItem: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#FBEB9B',
     padding: 10,
+    marginBottom: 10,
+    borderRadius: 10,
   },
   sectionHeader: {
     backgroundColor: '#f0f0f0',

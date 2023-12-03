@@ -13,6 +13,7 @@ function App() {
   const Stack = createNativeStackNavigator();
 
   useEffect(() => {
+    // DeleteData();
     CreateTables();
     InputCategories(); // input init data to categories tables
     TestInputQueries(); // input init data to incomes, expenses tables
