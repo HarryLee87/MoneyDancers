@@ -69,4 +69,17 @@ export default function CreateTables() {
       (_, error) => console.log(error),
     );
   });
+
+  //create budget table
+  db.transaction(tx => {
+    tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS Budget (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        amount REAL NOT NULL
+      )`,
+      [],
+      (_, result) => console.log('created Budget table'),
+      (_, error) => console.log(error),
+    );
+  });
 }
