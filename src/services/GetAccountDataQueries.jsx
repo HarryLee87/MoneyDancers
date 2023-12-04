@@ -129,3 +129,41 @@ export const getBudget = async () => {
       });
     });
   };
+
+  
+  export const getExpenseCategories = () => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM categories WHERE type = "expense_categories"',
+          [],
+          (_, results) => {
+            resolve(results.rows.raw());
+          },
+          (_, error) => {
+            console.error(error);
+            reject(error);
+          }
+        );
+      });
+    });
+  };
+
+  export const getIncomeCategories = () => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM categories WHERE type = "income_categories"',
+          [],
+          (_, results) => {
+            resolve(results.rows.raw());
+          },
+          (_, error) => {
+            console.error(error);
+            reject(error);
+          }
+        );
+      });
+    });
+  };
+  
