@@ -4,8 +4,8 @@ import AccountScreen from '../screens/AccountScreen';
 import TransactionScreen from '../screens/TransactionScreen';
 import AddScreen from '../screens/AddScreen';
 import ChartScreen from '../screens/ChartScreen';
-import SettingScreen from '../screens/SettingScreen';
-import {Image} from 'react-native';
+import AboutScreen from '../screens/AboutScreen';
+import { Image, StyleSheet } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,9 +22,9 @@ const settingInactiveIcon = require('../img/setting-inactive.png');
 
 const Navigation = () => {
   return (
-    <Tab.Navigator
-      screenOptions={({route}) => ({
-        tabBarIcon: ({focused}) => {
+    <Tab.Navigator 
+      screenOptions={({ route}) => ({
+        tabBarIcon: ({ focused }) => {
           let iconName;
           if (route.name === 'Account') {
             iconName = focused ? accountActiveIcon : accountInactiveIcon;
@@ -36,23 +36,29 @@ const Navigation = () => {
             iconName = focused ? addActiveIcon : addInactiveIcon;
           } else if (route.name === 'Chart') {
             iconName = focused ? chartActiveIcon : chartInactiveIcon;
-          } else if (route.name === 'Setting') {
+          } else if (route.name === 'About') {
             iconName = focused ? settingActiveIcon : settingInactiveIcon;
           }
           return <Image source={iconName} style={{width: 30, height: 30}} />;
         },
         tabBarStyle: {
-          backgroundColor: '#F3B391',
+          backgroundColor: '#F3B391',    
         },
-      })}>
+        headerStyle: {
+          backgroundColor: '#FFF9DB',
+        },
+      })}
+      >
       <Tab.Screen name="Account" component={AccountScreen} />
       <Tab.Screen name="Transaction" component={TransactionScreen} />
       {/* <Tab.Screen name="Create" component={HomeScreen} options={{ tabBarLabel: '' }} /> */}
       <Tab.Screen name="Add" component={AddScreen} />
       <Tab.Screen name="Chart" component={ChartScreen} />
-      <Tab.Screen name="Setting" component={SettingScreen} />
+      <Tab.Screen name="About" component={AboutScreen} />
     </Tab.Navigator>
   );
 };
 
 export default Navigation;
+
+
