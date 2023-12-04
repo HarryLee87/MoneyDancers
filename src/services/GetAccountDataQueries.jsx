@@ -152,7 +152,7 @@ export const getExpenseCategory = async () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM expense_categories',
+        'SELECT * FROM expenses_categories',
         [],
         (_, {rows}) => {
           console.log('category rows:', rows);

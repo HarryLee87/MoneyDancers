@@ -15,45 +15,36 @@ import {
 export default function TransactionExpense() {
   const [expenses, setExpenses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [expenseCategory, setExpenseCategory] = useState([]);
-
-  useEffect(() => {
-    const categoryFetchData = async () => {
-      try {
-        const expenseCategoryResult = await getExpenseCategory();
-        const categories = await Promise.all(
-          expenseCategoryResult.map(async category => {
-            return {...category};
-          }),
-        );
-        setExpenseCategory(categories);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    categoryFetchData();
-  }, []);
+  // const [expenseCategory, setExpenseCategory] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const expenseResult = await getExpenses();
-        console.log(expenseResult);
-        let newExpenses = [];
-
-        newExpenses = Array.from(expenseResult).map(row => ({
-          id: row.id,
-          date: row.date,
-          amount: row.amount,
-          description: row.description,
-          account_categories_id: row.account_categories_id,
-          expense_categories_id: row.expense_categories_id,
-          // expense_category_name: expenseCategory.find(
-          //   category => category.id === row.expense_categories_id,
-          // )?.name,
+        // console.log(expenseResult);
+        const categoryResult = await getExpenseCategory();
+        const categoryMap = categoryResult.reduce((acc, category) => {
+          acc[category.id] = category.name;
+          return acc;
+        }, {});
+        const mappedExpenses = expenseResult.map(expense => ({
+          ...expense,
+          category_name: categoryMap[expense.expense_categories_id], // Add category name to each expense
         }));
+        // let newExpenses = [];
 
-        setExpenses(newExpenses);
+        // newExpenses = Array.from(expenseResult).map(row => ({
+        //   id: row.id,
+        //   date: row.date,
+        //   amount: row.amount,
+        //   description: row.description,
+        //   account_categories_id: row.account_categories_id,
+        //   expense_categories_id: row.expense_categories_id,
+        // expense_category_name: expenseCategory.find(
+        //   category => category.id === row.expense_categories_id,
+        // )?.name,
+
+        setExpenses(mappedExpenses);
         // setExpenseCategory(expenseCategoryResult);
         setIsLoading(false);
       } catch (error) {
@@ -86,10 +77,9 @@ export default function TransactionExpense() {
                 .filter(item => item.date === date)
                 .map(item => (
                   <View key={item.id} style={styles.expenseItem}>
-                    {/* <Text>{`${item.category_name}`}</Text> */}
-                    <Text>{`${item.expense_categories_id}`}</Text>
-                    <Text>{`${item.description}`}</Text>
-                    <Text>{`${item.amount}`}</Text>
+                    <Text>{item.category_name || 'Unknown Category'}</Text>
+                    <Text>{item.description}</Text>
+                    <Text>${item.amount}</Text>
                   </View>
                 ))}
             </View>
