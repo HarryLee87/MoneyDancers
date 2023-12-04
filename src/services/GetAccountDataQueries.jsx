@@ -182,7 +182,8 @@ export const getIncomes = async () => {
         },
       );
     });
-  };
+  });
+};
 
   
   export const getExpenseCategories = () => {
