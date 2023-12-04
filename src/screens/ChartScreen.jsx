@@ -4,10 +4,28 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PieChart from 'react-native-pie-chart';
 import ChartScreenIncome from './ChartScreenIncome';
+import { getAllTransactions } from "../database";
 
 const Stack = createNativeStackNavigator();
 
 const ChartScreen = ({ navigation }) => {
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        // Fetch transactions
+        getAllTransactions((fetchedTransactions) => {
+          setTransactions(fetchedTransactions);
+        });
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
   const widthAndHeight = 250;
   const data = [
     { name: 'Housing', value: 32, color: '#9EC1CF', amount: '$372.16' },

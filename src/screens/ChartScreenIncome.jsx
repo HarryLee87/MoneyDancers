@@ -2,9 +2,26 @@
 import React,{useState, useEffect} from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from "react-native";
 import PieChart from 'react-native-pie-chart';
-import * as Progress from 'react-native-progress';
+import { getAllTransactions } from "../database";
 
 const ChartScreenIncome = ({navigation}) => {
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        // Fetch transactions
+        getAllTransactions((fetchedTransactions) => {
+          setTransactions(fetchedTransactions);
+        });
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+  
   const widthAndHeight = 250
     const data = [
         { name: 'Salary', value: 85, color: '#6A7FDB', amount: '$2200' },
