@@ -28,9 +28,11 @@ export default function AddScreen() {
   //default value
   const [year, setYear] = React.useState(new Date().getFullYear().toString());
   const [month, setMonth] = React.useState(
-    (new Date().getMonth() + 1).toString(),
+    (new Date().getMonth() + 1).toString().padStart(2, '0'),
   );
-  const [day, setDay] = React.useState(new Date().getDate().toString());
+  const [day, setDay] = React.useState(
+    new Date().getDate().toString().padStart(2, '0'),
+  );
   const [date, setDate] = React.useState('');
   const [dateShow, setDateShow] = React.useState(false);
   const [account, setAccount] = React.useState('');
@@ -65,8 +67,8 @@ export default function AddScreen() {
   const handleDateChange = (e, selectedDate) => {
     setDateShow(false);
     setYear(selectedDate.getFullYear().toString());
-    setMonth((selectedDate.getMonth() + 1).toString());
-    setDay(selectedDate.getDate().toString());
+    setMonth((selectedDate.getMonth() + 1).toString().padStart(2, '0'));
+    setDay(selectedDate.getDate().toString().padStart(2, '0'));
   };
 
   const handleAccountChange = e => {
@@ -149,8 +151,8 @@ export default function AddScreen() {
 
         // reset to default
         setYear(new Date().getFullYear().toString());
-        setMonth((new Date().getMonth() + 1).toString());
-        setDay(new Date().getDate().toString());
+        setMonth((new Date().getMonth() + 1).toString().padStart(2, '0'));
+        setDay(new Date().getDate().toString().padStart(2, '0'));
         setAccount(null);
         setTypeBtnSelected('Expense');
         setCategory(null);
