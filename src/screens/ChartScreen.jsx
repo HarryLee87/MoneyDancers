@@ -1,9 +1,10 @@
 
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Picker} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PieChart from 'react-native-pie-chart';
-import {DropDown} from 'react-native-element-dropdown';
+// import {DropDown} from 'react-native-element-dropdown';
+import RNPickerSelect from 'react-native-picker-select';
 import {
   getTotalExpensesForEachCategory,
   getTotalIncomeForEachCategory,
@@ -85,29 +86,30 @@ const ChartScreen = ({ navigation }) => {
   const series = data.map((item) => item.value);
   const sliceColor = data.map((item) => item.color);
 
-  const monthOptions = [
-    { label: 'January', value: 'January' },
-    { label: 'February', value: 'February' },
-    { label: 'March', value: 'March' },
-    { label: 'April', value: 'April' },
-    { label: 'May', value: 'May' },
-    { label: 'June', value: 'June' },
-    { label: 'July', value: 'July' },
-    { label: 'August', value: 'August' },
-    { label: 'September', value: 'September' },
-    { label: 'October', value: 'October' },
-    { label: 'November', value: 'November' },
-    { label: 'December', value: 'December' },
-  ];
+  // const monthOptions = [
+  //   { label: 'January', value: 'January' },
+  //   { label: 'February', value: 'February' },
+  //   { label: 'March', value: 'March' },
+  //   { label: 'April', value: 'April' },
+  //   { label: 'May', value: 'May' },
+  //   { label: 'June', value: 'June' },
+  //   { label: 'July', value: 'July' },
+  //   { label: 'August', value: 'August' },
+  //   { label: 'September', value: 'September' },
+  //   { label: 'October', value: 'October' },
+  //   { label: 'November', value: 'November' },
+  //   { label: 'December', value: 'December' },
+  // ];
 
   return (    
     <View style={styles.container}>
       <View style={styles.chartHeader}>
           <View style={{ ...styles.monthHeader, marginBottom: 10 }}>
-            <Text style={styles.monthTitle}>January 2023</Text>  
+            <Text style={styles.monthTitle}>December 2023</Text>  
             {/* <DropDown
             data={monthOptions}
             value={selectedMonth}
+            label
             onChange={(value) => setSelectedMonth(value)}
           /> */}
           </View>
