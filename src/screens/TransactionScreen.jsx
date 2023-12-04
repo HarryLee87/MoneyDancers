@@ -1,11 +1,18 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Button} from 'react-native';
 import TransactionExpense from '../components/TransactionExpense';
 
 const TransactionScreen = () => {
+  const [reload, setReload] = React.useState(false);
+
+  const handleReload = () => {
+    setReload(preState => !preState);
+  };
+
   return (
     <View style={styles.container}>
-      <TransactionExpense />
+      <Button title="Reload" onPress={handleReload} />
+      <TransactionExpense key={reload} />
     </View>
   );
 };
