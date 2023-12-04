@@ -4,7 +4,8 @@ import AccountScreen from '../screens/AccountScreen';
 import TransactionScreen from '../screens/TransactionScreen';
 import ChartScreen from '../screens/ChartScreen';
 import AboutScreen from '../screens/AboutScreen';
-import {Image, StyleSheet} from 'react-native';
+import { Image, StyleSheet } from 'react-native';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -19,9 +20,9 @@ const settingInactiveIcon = require('../img/setting-inactive.png');
 
 const Navigation = () => {
   return (
-    <Tab.Navigator
-      screenOptions={({route}) => ({
-        tabBarIcon: ({focused}) => {
+    <Tab.Navigator 
+      screenOptions={({ route}) => ({
+        tabBarIcon: ({ focused }) => {
           let iconName;
           if (route.name === 'Account') {
             iconName = focused ? accountActiveIcon : accountInactiveIcon;
@@ -37,12 +38,13 @@ const Navigation = () => {
           return <Image source={iconName} style={{width: 30, height: 30}} />;
         },
         tabBarStyle: {
-          backgroundColor: '#F3B391',
+          backgroundColor: '#F3B391',    
         },
         headerStyle: {
           backgroundColor: '#FFF9DB',
         },
-      })}>
+      })}
+      >
       <Tab.Screen name="Account" component={AccountScreen} />
       <Tab.Screen name="Transaction" component={TransactionScreen} />
       {/* <Tab.Screen name="Create" component={HomeScreen} options={{ tabBarLabel: '' }} /> */}
@@ -53,3 +55,5 @@ const Navigation = () => {
 };
 
 export default Navigation;
+
+
