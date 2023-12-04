@@ -87,7 +87,7 @@ const ChartScreen = ({ navigation }) => {
             <View style={styles.incomeExpenseContainer}>
               <View style={styles.totalHeader}>
                 <Text style={styles.totalTitle}>Expense</Text>
-                <Text style={{ ...styles.totalExpenseValue, padding: 10 }}>${totalExpense.toFixed(2)}</Text>
+                <Text style={{ ...styles.totalExpenseValue, padding: 10 }}>${totalExpenses.toFixed(2)}</Text>
               </View>
               <View style={styles.totalHeader}>
                 <Text style={styles.totalTitle}>Income</Text>
