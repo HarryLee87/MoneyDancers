@@ -22,7 +22,10 @@ import {
   getIncomeCategoryId,
   getIncomeListData,
 } from '../services/GetAddRequiredDataQueries';
-import db from '../database/OpenDatabase';
+import {
+  insertExpenseTransaction,
+  insertIncomeTransaction,
+} from '../services/InsertAddTransactionQueries';
 
 export default function AddScreen() {
   //default value
@@ -118,33 +121,24 @@ export default function AddScreen() {
 
         if (newTransaction && newTransaction.type === 'Expense') {
           const expenseId = await getExpenseCategoryId({name: category.label});
-          const query = `INSERT INTO expenses (date, amount, description, account_categories_id, expense_categories_id) VALUES ("${newTransaction.date}", ${newTransaction.amount}, "${newTransaction.note}", ${accountId}, ${expenseId})`;
-          console.log('check query: ', query);
-          db.transaction(tx => {
-            tx.executeSql(
-              query,
-              [],
-              (_, result) =>
-                console.log(
-                  'Data inserted into expenses successfully from AddScreen',
-                ),
-              (_, error) => console.log(error),
-            );
-          });
+          const expenseQuery = [
+            newTransaction.date,
+            newTransaction.amount,
+            newTransaction.note,
+            accountId,
+            expenseId,
+          ];
+          insertExpenseTransaction({expenseQuery});
         } else if (newTransaction && newTransaction.type === 'Income') {
           const incomeId = await getIncomeCategoryId({name: category.label});
-          const query = `INSERT INTO incomes (date, amount, description, account_categories_id, income_categories_id) VALUES ("${newTransaction.date}", "${newTransaction.amount}", "${newTransaction.note}", ${accountId}, ${incomeId})`;
-          db.transaction(tx => {
-            tx.executeSql(
-              query,
-              [],
-              (_, result) =>
-                console.log(
-                  'Data inserted into incomes successfully from AddScreen',
-                ),
-              (_, error) => console.log(error),
-            );
-          });
+          const incomeQuery = [
+            newTransaction.date,
+            newTransaction.amount,
+            newTransaction.note,
+            accountId,
+            incomeId,
+          ];
+          insertIncomeTransaction({incomeQuery});
         }
 
         navigation.navigate('Transaction');
@@ -371,6 +365,7 @@ const styles = StyleSheet.create({
     color: 'black',
     padding: 4,
     paddingHorizontal: 15,
+    marginVertical: 5,
     borderRadius: 5,
     borderWidth: 1,
   },
