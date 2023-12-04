@@ -36,7 +36,7 @@ export default function AddScreen() {
   const [account, setAccount] = React.useState('');
   const [typeBtnSelected, setTypeBtnSelected] = React.useState('Expense');
   const [category, setCategory] = React.useState(null);
-  const [amount, setAmount] = React.useState(0.0);
+  const [amount, setAmount] = React.useState();
   const [note, setNote] = React.useState(null);
   const [newTransaction, setNewTransaction] = React.useState(null);
   const navigation = useNavigation();
@@ -81,7 +81,9 @@ export default function AddScreen() {
     setCategory(e);
   };
   const handleAmountChange = e => {
-    setAmount(parseInt(e) || 0);
+    if (/^\d*\.?\d{0,2}$/.test(e)) {
+      setAmount(e);
+    }
   };
 
   const handleNoteChange = text => {
@@ -114,7 +116,6 @@ export default function AddScreen() {
 
         if (newTransaction && newTransaction.type === 'Expense') {
           const expenseId = await getExpenseCategoryId({name: category.label});
-
           const query = `INSERT INTO expenses (date, amount, description, account_categories_id, expense_categories_id) VALUES ("${newTransaction.date}", ${newTransaction.amount}, "${newTransaction.note}", ${accountId}, ${expenseId})`;
           console.log('check query: ', query);
           db.transaction(tx => {
@@ -145,6 +146,7 @@ export default function AddScreen() {
         }
 
         navigation.navigate('Transaction');
+
         // reset to default
         setYear(new Date().getFullYear().toString());
         setMonth((new Date().getMonth() + 1).toString());
@@ -152,7 +154,7 @@ export default function AddScreen() {
         setAccount(null);
         setTypeBtnSelected('Expense');
         setCategory(null);
-        setAmount(0);
+        setAmount();
         setNote(null);
 
         return newTransaction;
@@ -260,7 +262,7 @@ export default function AddScreen() {
           <TextInput
             style={styles.input}
             placeholder="Please enter amount"
-            value={amount.toString()}
+            value={amount}
             onChangeText={handleAmountChange}
             keyboardType="numeric"
           />
