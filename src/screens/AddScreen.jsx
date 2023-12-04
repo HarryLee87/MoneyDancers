@@ -25,8 +25,7 @@ import {
 import {
   insertExpenseTransaction,
   insertIncomeTransaction,
-} from '../services/GetAddTransactionQueries';
-import db from '../database/OpenDatabase';
+} from '../services/InsertAddTransactionQueries';
 
 export default function AddScreen() {
   //default value
