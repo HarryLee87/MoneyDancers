@@ -142,9 +142,9 @@ const styles = StyleSheet.create({
   },
 
   horizontalLine: {
-    borderBottomColor: '#F3B391', // You can set the color you prefer
-    borderBottomWidth: 1,        // Adjust the width of the line
-    marginVertical: 15,          // Adjust the spacing above and below the line
+    borderBottomColor: '#F3B391', 
+    borderBottomWidth: 1,        
+    marginVertical: 15,          
      
   },
   transaction: {
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button: {
-    backgroundColor: '#FBEB9B', // Button color
+    backgroundColor: '#FBEB9B',
     // paddingVertical: 8,
     // paddingHorizontal: 20,
     marginHorizontal: 3,
