@@ -135,39 +135,10 @@ export const getBudget = async () => {
     return new Promise((resolve, reject) => {
       db.transaction(tx => {
         tx.executeSql(
-          'SELECT * FROM categories WHERE type = "expense_categories"',
-          [],
-          (_, results) => {
-            resolve(results.rows.raw());
-          },
-          (_, error) => {
-            console.error(error);
-            reject(error);
-          }
-        );
-      });
-    });
-  };
-
-<<<<<<< Updated upstream
-  export const getIncomeCategories = () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM categories WHERE type = "income_categories"',
-          [],
-          (_, results) => {
-            resolve(results.rows.raw());
-=======
-export const getExpenseCategories = () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
           'SELECT * FROM expenses_categories',
           [],
           (_, results) => {
             resolve(rows.raw());
->>>>>>> Stashed changes
           },
           (_, error) => {
             console.error(error);
@@ -177,9 +148,6 @@ export const getExpenseCategories = () => {
       });
     });
   };
-<<<<<<< Updated upstream
-  
-=======
 
   export const getIncomeCategories = () => {
     return new Promise((resolve, reject) => {
@@ -234,4 +202,3 @@ export const getExpenseCategories = () => {
       });
     });
   };
->>>>>>> Stashed changes
