@@ -38,12 +38,8 @@ export default function AddScreen() {
   const [category, setCategory] = React.useState(null);
   const [amount, setAmount] = React.useState(0.0);
   const [note, setNote] = React.useState(null);
-
-  const navigation = useNavigation();
-  // for testing display result
-  const [displayCondition, setDisplayCondition] = React.useState(false);
   const [newTransaction, setNewTransaction] = React.useState(null);
-  //----
+  const navigation = useNavigation();
 
   // for dropdown list data
   const [AccountListData, setAccountListData] = useState([]);
@@ -102,9 +98,6 @@ export default function AddScreen() {
 
         const dateString = year + '-' + month + '-' + day;
         setDate(dateString);
-        //for testing display result
-        setDisplayCondition(true);
-        //----
 
         const newTransaction = {
           // year: year,
@@ -290,34 +283,6 @@ export default function AddScreen() {
             }}
           />
         </View>
-
-        {/* Display testing*/}
-        {newTransaction && displayCondition ? (
-          <View>
-            <Text>Added Result</Text>
-            <Text>
-              Date:
-              {/* {newTransaction.year +
-                '/' +
-                newTransaction.month +
-                '/' +
-                newTransaction.day} */}
-              Date: {newTransaction.date}
-            </Text>
-            <Text>Account: {newTransaction.account}</Text>
-            <Text>Type: {newTransaction.type}</Text>
-            <Text>Category: {newTransaction.category}</Text>
-            <Text>Amount: {newTransaction.amount}</Text>
-            <Text>Note: {newTransaction.note}</Text>
-            <Button
-              title="clear"
-              onPress={() => {
-                setNewTransaction(null);
-                setDisplayCondition(false);
-              }}
-            />
-          </View>
-        ) : null}
       </SafeAreaView>
     </GestureHandlerRootView>
   );
