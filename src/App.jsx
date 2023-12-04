@@ -8,12 +8,14 @@ import CreateTables from './database/CreateTables';
 import InputCategories from './database/InputCategories';
 import TestInputQueries from './database/TestInputQueries';
 import DeleteData from './database/DeleteData';
+import DeleteTables from './database/DeleteTables';
 
 function App() {
   const Stack = createNativeStackNavigator();
 
   useEffect(() => {
     // DeleteData();
+    // DeleteTables();
     CreateTables();
     InputCategories(); // input init data to categories tables
     TestInputQueries(); // input init data to incomes, expenses tables

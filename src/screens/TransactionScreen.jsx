@@ -1,20 +1,29 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, Button, Tou} from 'react-native';
-import TransactionExpense from '../components/TransactionExpense';
-// import Mybutton from '../components/Mybutton';
+import TransactionExpense from '../components/TransacExpense';
+import TransactionIncome from '../components/TransacIncome';
 
 const TransactionScreen = () => {
+  const [status, setStatus] = useState('expense');
   return (
     <View style={styles.container}>
       <View style={[styles.buttonContainer, {justifyContent: 'flex-end'}]}>
         <View style={[styles.expenseButton, {marginRight: 10}, {rounded: 5}]}>
-          <Button title="Expenses" color={'#F3B391'} />
+          <Button
+            title="Expenses"
+            color={'#F3B391'}
+            onPress={() => setStatus('expenses')}
+          />
         </View>
         <View style={[styles.expenseButton, {marginLeft: 10}]}>
-          <Button title="Incomes" color={'#ADC989'} />
+          <Button
+            title="Incomes"
+            color={'#ADC989'}
+            onPress={() => setStatus('incomes')}
+          />
         </View>
       </View>
-      <TransactionExpense />
+      {status === 'expenses' ? <TransactionExpense /> : <TransactionIncome />}
     </View>
   );
 };
@@ -34,7 +43,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'flex-end',
-    marginTop: 10,
+    marginTop: 20,
     flexDirection: 'row',
   },
   expenseButton: {

@@ -23,6 +23,7 @@ export default function TransactionExpense() {
         const expenseResult = await getExpenses();
         // console.log(expenseResult);
         const categoryResult = await getExpenseCategory();
+        console.log(categoryResult);
         const categoryMap = categoryResult.reduce((acc, category) => {
           acc[category.id] = category.name;
           return acc;
@@ -72,14 +73,31 @@ export default function TransactionExpense() {
         ) : (
           uniqueDates.map(date => (
             <View key={date}>
-              <Text style={styles.dateValue}>{`Date: ${date}`}</Text>
+              <Text style={styles.dateValue}>{date}</Text>
               {expenses
                 .filter(item => item.date === date)
                 .map(item => (
                   <View key={item.id} style={styles.expenseItem}>
-                    <Text>{item.category_name || 'Unknown Category'}</Text>
-                    <Text>{item.description}</Text>
-                    <Text>${item.amount}</Text>
+                    <View style={styles.expenseItemColumn}>
+                      <Text>{item.category_name || 'Unknown Category'}</Text>
+                    </View>
+                    <View style={styles.expenseItemColumn}>
+                      <Text>{item.description}</Text>
+                    </View>
+                    <View
+                      style={[
+                        styles.expenseItemColumn,
+                        {alignItems: 'flex-end'},
+                      ]}>
+                      <Text>
+                        {item.amount.toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </Text>
+                    </View>
                   </View>
                 ))}
             </View>
@@ -116,5 +134,9 @@ const styles = StyleSheet.create({
   },
   sectionHeaderText: {
     fontWeight: 'bold',
+  },
+  expenseItemColumn: {
+    flex: 1,
+    marginRight: 10,
   },
 });

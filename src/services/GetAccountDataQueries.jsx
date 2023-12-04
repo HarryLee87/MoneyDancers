@@ -166,3 +166,40 @@ export const getExpenseCategory = async () => {
     });
   });
 };
+
+export const getIncomes = async () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM incomes ORDER BY date DESC',
+        [],
+        (_, {rows}) => {
+          resolve(rows.raw());
+        },
+        (_, error) => {
+          console.log(error);
+          reject(error);
+        },
+      );
+    });
+  });
+};
+
+export const getIncomeCategory = async () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM income_categories',
+        [],
+        (_, {rows}) => {
+          console.log('category rows:', rows);
+          resolve(rows.raw());
+        },
+        (_, error) => {
+          console.log(error);
+          reject(error);
+        },
+      );
+    });
+  });
+};
