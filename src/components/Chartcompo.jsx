@@ -47,15 +47,6 @@ const ChartCompo = ({isLoading, data, getData, percentageKey, valueKey}) => {
 
   return (
     <View style={styles.container}>
-      {/* <View
-        style={{
-          ...styles.container,
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 130,
-          marginBottom: 130,
-        }}> */}
       <View style={styles.chartContainer}>
         <PieChart
           widthAndHeight={widthAndHeight}
