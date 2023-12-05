@@ -185,78 +185,75 @@ export const getIncomes = async () => {
   });
 };
 
-  
-  export const getExpenseCategories = () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM expenses_categories',
-          [],
-          (_, results) => {
-            resolve(rows.raw());
-          },
-          (_, error) => {
-            console.error(error);
-            reject(error);
-          }
-        );
-      });
+export const getExpenseCategories = () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM expenses_categories',
+        [],
+        (_, results) => {
+          resolve(rows.raw());
+        },
+        (_, error) => {
+          console.error(error);
+          reject(error);
+        },
+      );
     });
-  };
+  });
+};
 
-  export const getIncomeCategories = () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM income_categories',
-          [],
-          (_, results) => {
-            resolve(rows.raw());
-          },
-          (_, error) => {
-            console.error(error);
-            reject(error);
-          }
-        );
-      });
+export const getIncomeCategories = () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM income_categories',
+        [],
+        (_, results) => {
+          resolve(rows.raw());
+        },
+        (_, error) => {
+          console.error(error);
+          reject(error);
+        },
+      );
     });
-  };
-  
-  export const getTotalExpensesForEachCategory = async () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT e.expense_categories_id, ec.name, SUM(e.amount) as totalExpenses FROM expenses e INNER JOIN expenses_categories ec ON e.expense_categories_id = ec.id GROUP BY e.expense_categories_id',
-          [],
-          (_, { rows }) => {
-            resolve(rows.raw());
-          },
-          (_, error) => {
-            console.log(error);
-            reject(error);
-          }
-        );
-      });
-    });
-  };
+  });
+};
 
-  export const getTotalIncomeForEachCategory = async () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT i.income_categories_id, ic.name, SUM(i.amount) as totalIncome FROM incomes i INNER JOIN income_categories ic ON i.income_categories_id = ic.id GROUP BY i.income_categories_id',
-          [],
-          (_, { rows }) => {
-            resolve(rows.raw());
-          },
-          (_, error) => {
-            console.log(error);
-            reject(error);
-          }
-        );
-      });
+export const getTotalExpensesForEachCategory = async () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT e.expense_categories_id, ec.name, SUM(e.amount) as totalExpenses, ROUND(SUM(e.amount) * 100.0 / (SELECT SUM(amount) FROM expenses)) as expensePercentage FROM expenses e INNER JOIN expenses_categories ec ON e.expense_categories_id = ec.id GROUP BY e.expense_categories_id ORDER BY totalExpenses DESC',
+        [],
+        (_, {rows}) => {
+          resolve(rows.raw());
+        },
+        (_, error) => {
+          console.log(error);
+          reject(error);
+        },
+      );
     });
-  };
+  });
+};
+
+export const getTotalIncomeForEachCategory = async () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT i.income_categories_id, ic.name, SUM(i.amount) as totalIncome, ROUND(SUM(i.amount) * 100.0 / (SELECT SUM(amount) FROM incomes)) as incomePercentage FROM incomes i INNER JOIN income_categories ic ON i.income_categories_id = ic.id GROUP BY i.income_categories_id ORDER BY totalIncome DESC',
+        [],
+        (_, {rows}) => {
+          resolve(rows.raw());
+        },
+        (_, error) => {
+          console.log(error);
+          reject(error);
+        },
+      );
+    });
   });
 };
 
@@ -278,4 +275,3 @@ export const getIncomeCategory = async () => {
     });
   });
 };
-
