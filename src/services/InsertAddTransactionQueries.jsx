@@ -7,6 +7,7 @@ export function insertExpenseTransaction({expenseQuery}) {
       expenseQuery,
       (_, result) => {
         console.log('Data inserted into expenses successfully from AddScreen');
+        console.log('result:', result);
       },
       (_, error) => {
         console.log(error);

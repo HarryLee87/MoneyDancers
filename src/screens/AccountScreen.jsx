@@ -1,15 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {View, Text, StyleSheet, ScrollView, Button} from 'react-native';
 import * as Progress from 'react-native-progress';
 import {
   getTotalAssets,
   getTotalLiabilities,
   getAccountCategories,
-  getTotalExpensesByCategory,
-  getTotalIncomeByCategory,
+  getTotalIncomeByAccountCategory,
+  getTotalExpensesByAccountCategory,
 } from '../services/GetAccountDataQueries';
 import SetBudget from '../components/SetBudget';
-import { getBudget } from '../services/GetAccountDataQueries';
+import {getBudget} from '../services/GetAccountDataQueries';
+import {useFocusEffect} from '@react-navigation/native';
 
 const AccountScreen = () => {
   const [totalAssets, setTotalAssets] = useState(0);
@@ -19,59 +20,86 @@ const AccountScreen = () => {
   const [setBudgetVisible, setSetBudgetVisible] = useState(false);
   const [budget, setBudget] = useState(0);
 
+  const [totalIncomeByAccountCategories, setTotalIncomeByAccountCategories] =
+    useState([]);
+  const [
+    totalExpensesByAccountCategories,
+    setTotalExpensesByAccountCategories,
+  ] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const assetsResult = await getTotalAssets();
+      const assets = assetsResult[0].totalAssets;
+      const liabilitiesResult = await getTotalLiabilities();
+      const liabilities = liabilitiesResult[0].totalLiabilities;
+      const categories = await getAccountCategories();
+      const loadBudget = await getBudget();
+
+      const totalIncomeByAccountCat = await getTotalIncomeByAccountCategory();
+      const totalExpensesByAccountCat =
+        await getTotalExpensesByAccountCategory();
+      setTotalIncomeByAccountCategories(totalIncomeByAccountCat);
+      setTotalExpensesByAccountCategories(totalExpensesByAccountCat);
+      console.log('totalIncomeByAccountCat:', totalIncomeByAccountCat);
+      console.log('totalExpensesByAccountCat:', totalExpensesByAccountCat);
+
+      setAccountCategories(categories);
+      console.log('categories:', categories);
+      setTotalAssets(assets.toFixed(2));
+      setTotalLiabilities(liabilities.toFixed(2));
+      setBudget(loadBudget);
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, []),
+  );
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const assetsResult = await getTotalAssets();
-        const assets = assetsResult[0].totalAssets;
-        const liabilitiesResult = await getTotalLiabilities();
-        const liabilities = liabilitiesResult[0].totalLiabilities;
-        const categories = await getAccountCategories();
-        const totalByAccCat = await Promise.all(
-          categories.map(async category => {
-            const totalIncomeResult = await getTotalIncomeByCategory(
-              category.id,
-            );
-            const totalIncome = totalIncomeResult[0]?.totalIncome || 0;
-            const totalExpensesResult = await getTotalExpensesByCategory(
-              category.id,
-            );
-            const totalExpenses = totalExpensesResult[0]?.totalExpenses || 0;
-            return {...category, totalIncome, totalExpenses};
-          }),
-        );
-        const loadBudget = await getBudget();
-
-        setAccountCategories(totalByAccCat);
-        setTotalAssets(assets.toFixed(2));
-        setTotalLiabilities(liabilities.toFixed(2));
-        setBudget(loadBudget);
-
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     fetchData();
   }, []);
 
-    if (isLoading) {
-      return (
-        <View style={styles.container}>
-          <Text>Loading...</Text>
-        </View>
-      );
-    }
+  const calculateNetEarnings = () => {
+    return accountCategories.map(category => {
+      const income =
+        totalIncomeByAccountCategories.find(
+          ic => ic.account_categories_id === category.id,
+        )?.totalIncome || 0;
+      const expense =
+        totalExpensesByAccountCategories.find(
+          ec => ec.account_categories_id === category.id,
+        )?.totalExpenses || 0;
+      const netEarnings = income - expense;
+      return {...category, netEarnings};
+    });
+  };
 
-    const toggleSetBudgetVisible = () => {
-      setSetBudgetVisible(!setBudgetVisible);
-    };
+  const netEarningsByCategory = calculateNetEarnings();
 
-    const handleSaveBudget = (newBudget)  => {
-        console.log('budget:', newBudget);
-        setBudget(newBudget);
-        toggleSetBudgetVisible();
-    };
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  const toggleSetBudgetVisible = () => {
+    setSetBudgetVisible(!setBudgetVisible);
+  };
+
+  const handleSaveBudget = newBudget => {
+    console.log('budget:', newBudget);
+    setBudget(newBudget);
+    toggleSetBudgetVisible();
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -101,26 +129,38 @@ const AccountScreen = () => {
           height={30}
           style={styles.progressBar}
         />
-        <Text style={styles.budgetPercentage}>{((totalLiabilities / budget) * 100).toFixed(1)}%</Text>
+        <Text style={styles.budgetPercentage}>
+          {((totalLiabilities / budget) * 100).toFixed(1)}%
+        </Text>
       </View>
       <View style={styles.budgetButtonContainer}>
-        <Button style={styles.budgetButton} color="#F3B391" title="Set Budget" onPress={toggleSetBudgetVisible} />
+        <Button
+          style={styles.budgetButton}
+          color="#F3B391"
+          title="Set Budget"
+          onPress={toggleSetBudgetVisible}
+        />
       </View>
-      <SetBudget visible={setBudgetVisible} onSave={handleSaveBudget} onClose={toggleSetBudgetVisible} initialBudget={budget} />
+      <SetBudget
+        visible={setBudgetVisible}
+        onSave={handleSaveBudget}
+        onClose={toggleSetBudgetVisible}
+        initialBudget={budget}
+      />
 
       {/* Account Details */}
       <View style={styles.accountContainer}>
         <Text style={styles.accountTitle}>My Account</Text>
-        {accountCategories.map(category => (
+        {netEarningsByCategory.map(category => (
           <View key={category.id} style={styles.accountItem}>
             <Text style={styles.accountType}>{category.name}</Text>
             <Text
               style={
-                category.totalIncome - category.totalExpenses < 0
+                category.netEarnings < 0
                   ? styles.accountValueRed
                   : styles.accountValue
               }>
-              ${Math.abs(category.totalIncome - category.totalExpenses)}
+              ${category.netEarnings.toFixed(2)}
             </Text>
           </View>
         ))}
@@ -219,7 +259,7 @@ const styles = StyleSheet.create({
   budgetButtonContainer: {
     alignItems: 'flex-end',
     paddingRight: 20,
-    marginTop: 10, 
+    marginTop: 10,
   },
   budgetButton: {
     width: 'auto',

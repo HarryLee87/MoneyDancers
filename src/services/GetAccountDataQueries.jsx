@@ -54,42 +54,6 @@ export const getTotalLiabilities = async () => {
   });
 };
 
-export const getTotalIncomeByCategory = async categoryId => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT SUM(amount) as totalIncome FROM incomes WHERE income_categories_id = ?',
-        [categoryId],
-        (_, {rows}) => {
-          resolve(rows.raw());
-        },
-        (_, error) => {
-          console.log(error);
-          reject(error);
-        },
-      );
-    });
-  });
-};
-
-export const getTotalExpensesByCategory = async categoryId => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT SUM(amount) as totalExpenses FROM expenses WHERE expense_categories_id = ?',
-        [categoryId],
-        (_, {rows}) => {
-          resolve(rows.raw());
-        },
-        (_, error) => {
-          console.log(error);
-          reject(error);
-        },
-      );
-    });
-  });
-};
-
 export const getBudget = async () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -112,7 +76,7 @@ export const getBudget = async () => {
   });
 };
 
-export const setBudget = async amount => {
+export const setBudget = async (amount) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
@@ -265,6 +229,42 @@ export const getIncomeCategory = async () => {
         [],
         (_, {rows}) => {
           console.log('category rows:', rows);
+          resolve(rows.raw());
+        },
+        (_, error) => {
+          console.log(error);
+          reject(error);
+        },
+      );
+    });
+  });
+};
+
+export const getTotalExpensesByAccountCategory = async () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT e.account_categories_id, ac.name, SUM(e.amount) as totalExpenses FROM expenses e INNER JOIN account_categories ac ON e.account_categories_id = ac.id GROUP BY e.account_categories_id ORDER BY totalExpenses DESC',
+        [],
+        (_, {rows}) => {
+          resolve(rows.raw());
+        },
+        (_, error) => {
+          console.log(error);
+          reject(error);
+        },
+      );
+    });
+  });
+};
+
+export const getTotalIncomeByAccountCategory = async () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT i.account_categories_id, ac.name, SUM(i.amount) as totalIncome FROM incomes i INNER JOIN account_categories ac ON i.account_categories_id = ac.id GROUP BY i.account_categories_id ORDER BY totalIncome DESC',
+        [],
+        (_, {rows}) => {
           resolve(rows.raw());
         },
         (_, error) => {
