@@ -102,7 +102,7 @@ export default function AddScreen() {
         return;
       } else {
         const accountId = await getAccountCategoryId({name: account.label});
-
+        console.log('accountId:', accountId);
         const dateString = year + '-' + month + '-' + day;
         setDate(dateString);
 
@@ -129,6 +129,7 @@ export default function AddScreen() {
             expenseId,
           ];
           insertExpenseTransaction({expenseQuery});
+          console.log('expenseQuery:', expenseQuery);
         } else if (newTransaction && newTransaction.type === 'Income') {
           const incomeId = await getIncomeCategoryId({name: category.label});
           const incomeQuery = [
@@ -139,6 +140,7 @@ export default function AddScreen() {
             incomeId,
           ];
           insertIncomeTransaction({incomeQuery});
+          console.log('incomeQuery:', incomeQuery);
         }
 
         navigation.navigate('Transaction');

@@ -26,6 +26,16 @@ function insertInitialIncomes() {
       (_, error) => console.log(error),
     );
   });
+
+
+  db.transaction(tx => {
+    tx.executeSql(
+      'INSERT INTO incomes (date, amount, description, account_categories_id, income_categories_id) VALUES ("2023-12-20", 500.00, "Tip", 2, 3)',
+      [],
+      (_, result) => console.log('Tip Data inserted into incomes successfully'),
+      (_, error) => console.log(error),
+    );
+  });
 }
 
 function insertInitialExpenses() {
@@ -86,6 +96,15 @@ function insertInitialExpenses() {
   db.transaction(tx => {
     tx.executeSql(
       "INSERT INTO expenses (date, amount, description, account_categories_id, expense_categories_id) VALUES ('2023-12-16', 123.91, 'Sis birthday', 1, 1)",
+      [],
+      (_, result) => console.log('Data inserted into expenses successfully'),
+      (_, error) => console.log(error),
+    );
+  });
+
+  db.transaction(tx => {
+    tx.executeSql(
+      "INSERT INTO expenses (date, amount, description, account_categories_id, expense_categories_id) VALUES ('2023-12-17', 210.00, 'AirPods', 3, 6)",
       [],
       (_, result) => console.log('Data inserted into expenses successfully'),
       (_, error) => console.log(error),

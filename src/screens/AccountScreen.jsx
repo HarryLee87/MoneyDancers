@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {View, Text, StyleSheet, ScrollView, Button} from 'react-native';
 import * as Progress from 'react-native-progress';
 import {
@@ -7,9 +7,12 @@ import {
   getAccountCategories,
   getTotalExpensesByCategory,
   getTotalIncomeByCategory,
+  getTotalIncomeByAccountCategory,
+  getTotalExpensesByAccountCategory,
 } from '../services/GetAccountDataQueries';
 import SetBudget from '../components/SetBudget';
 import { getBudget } from '../services/GetAccountDataQueries';
+import { useFocusEffect } from '@react-navigation/native';
 
 const AccountScreen = () => {
   const [totalAssets, setTotalAssets] = useState(0);
@@ -19,7 +22,16 @@ const AccountScreen = () => {
   const [setBudgetVisible, setSetBudgetVisible] = useState(false);
   const [budget, setBudget] = useState(0);
 
-  useEffect(() => {
+  const [totalIncomeByAccountCategories, setTotalIncomeByAccountCategories] = useState([]);
+  const [totalExpensesByAccountCategories, setTotalExpensesByAccountCategories] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
+
+
     const fetchData = async () => {
       try {
         const assetsResult = await getTotalAssets();
@@ -27,22 +39,32 @@ const AccountScreen = () => {
         const liabilitiesResult = await getTotalLiabilities();
         const liabilities = liabilitiesResult[0].totalLiabilities;
         const categories = await getAccountCategories();
-        const totalByAccCat = await Promise.all(
-          categories.map(async category => {
-            const totalIncomeResult = await getTotalIncomeByCategory(
-              category.id,
-            );
-            const totalIncome = totalIncomeResult[0]?.totalIncome || 0;
-            const totalExpensesResult = await getTotalExpensesByCategory(
-              category.id,
-            );
-            const totalExpenses = totalExpensesResult[0]?.totalExpenses || 0;
-            return {...category, totalIncome, totalExpenses};
-          }),
-        );
+        // const totalByAccCat = await Promise.all(
+        //   categories.map(async category => {
+        //     const totalIncomeResult = await getTotalIncomeByCategory(
+        //       category.id,
+        //     );
+        //     const totalIncome = totalIncomeResult[0]?.totalIncome;
+        //     console.log('totalIncomeResult:', totalIncomeResult);
+        //     const totalExpensesResult = await getTotalExpensesByCategory(
+        //       category.id,
+        //     );
+        //     console.log('totalExpensesResult:', totalExpensesResult);
+        //     const totalExpenses = totalExpensesResult[0]?.totalExpenses;
+        //     return {...category, totalIncome, totalExpenses};
+        //   }),
+        // );
         const loadBudget = await getBudget();
 
-        setAccountCategories(totalByAccCat);
+        const totalIncomeByAccountCat = await getTotalIncomeByAccountCategory();
+        const totalExpensesByAccountCat = await getTotalExpensesByAccountCategory();
+        setTotalIncomeByAccountCategories(totalIncomeByAccountCat);
+        setTotalExpensesByAccountCategories(totalExpensesByAccountCat);
+        console.log('totalIncomeByAccountCat:', totalIncomeByAccountCat);
+        console.log('totalExpensesByAccountCat:', totalExpensesByAccountCat);
+
+        setAccountCategories(categories);
+        console.log('categories:', categories);
         setTotalAssets(assets.toFixed(2));
         setTotalLiabilities(liabilities.toFixed(2));
         setBudget(loadBudget);
@@ -52,8 +74,29 @@ const AccountScreen = () => {
         console.log(error);
       }
     };
-    fetchData();
-  }, []);
+
+    useFocusEffect(
+      useCallback(() => {
+        fetchData();
+      }, [])
+    );
+
+    useEffect(() => {
+      fetchData();
+    }, []);
+    
+
+
+  const calculateNetEarnings = () => {
+    return accountCategories.map(category => {
+      const income = totalIncomeByAccountCategories.find(ic => ic.account_categories_id === category.id)?.totalIncome || 0;
+      const expense = totalExpensesByAccountCategories.find(ec => ec.account_categories_id === category.id)?.totalExpenses || 0;
+      const netEarnings = income - expense;
+      return { ...category, netEarnings };
+    });
+  };
+  
+  const netEarningsByCategory = calculateNetEarnings();
 
     if (isLoading) {
       return (
@@ -111,7 +154,7 @@ const AccountScreen = () => {
       {/* Account Details */}
       <View style={styles.accountContainer}>
         <Text style={styles.accountTitle}>My Account</Text>
-        {accountCategories.map(category => (
+        {/* {accountCategories.map(category => (
           <View key={category.id} style={styles.accountItem}>
             <Text style={styles.accountType}>{category.name}</Text>
             <Text
@@ -123,7 +166,20 @@ const AccountScreen = () => {
               ${Math.abs(category.totalIncome - category.totalExpenses)}
             </Text>
           </View>
-        ))}
+        ))} */}
+        {netEarningsByCategory.map(category => (
+    <View key={category.id} style={styles.accountItem}>
+      <Text style={styles.accountType}>{category.name}</Text>
+      <Text
+        style={
+          category.netEarnings < 0
+            ? styles.accountValueRed
+            : styles.accountValue
+        }>
+        ${category.netEarnings.toFixed(2)}
+      </Text>
+    </View>
+  ))}
       </View>
     </ScrollView>
   );
