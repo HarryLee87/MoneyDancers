@@ -18,6 +18,68 @@ npm start
 yarn start
 ```
 
+## Requirement
+
+To install existing packages
+Use the command below to install the existing packages we use to build the application.
+
+```bash
+npm install
+```
+
+```bash
+npm install @react-navigation/bottom-tabs
+```
+
+```bash
+npm install @react-navigation/native
+```
+
+```bash
+npm install @react-navigation/native-stack
+```
+
+```bash
+npm install react-native-gesture-handler
+```
+
+```bash
+npm install react-native-safe-area-context
+```
+
+```bash
+npm install react-native-screens
+```
+
+```bash
+npm install react-native-progress
+```
+
+```bash
+npm install --save react-native-sqlite-storage
+```
+
+```bash
+npm install @react-native-community/datetimepicker --save
+```
+
+```bash
+npm install react-native-element-dropdown --save
+```
+
+```bash
+npm install @react-native-community/art --save
+```
+
+```bash
+npm install react-native link @react-native-community/art
+```
+
+```bash
+npm install react-native-pie-chart
+```
+
+
 ## Step 2: Start your Application
 
 Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
@@ -50,7 +112,7 @@ This is one way to run your app — you can also run it directly from within And
 
 Now that you have successfully run the app, let's modify it.
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
+1. Open `App.jsx` in your text editor of choice and edit some lines.
 2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
 
    For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
